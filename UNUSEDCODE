@@ -1,0 +1,113 @@
+// ***************************************
+
+$checking = Result::where('study_instance', '1.2.826.0.1.3680043.2.135.739016.76213737.7.1723780073.562.5')->get();
+    
+
+if($checking->isNotEmpty()){
+    $hasReport = 1;
+} else {
+// ***************************
+    $check_mods = DB::connection('sqlite_second')
+    ->table('UIDMODS')
+    ->where('NewUID', '1.2.826.0.1.3680043.2.135.739016.76213737.7.1723780073.562.5')
+    ->select('UIDMODS.OldUID')
+    ->get();
+
+
+    if($check_mods->isNotEmpty()){
+        
+        $checking2nd = Result::where('study_instance', $check_mods[0]->OldUID)->get();
+        //var_dump("test");die();
+        if($checking2nd->isNotEmpty()){
+            $hasReport = 1;
+        }
+    }else{
+            $hasReport = 0;
+    }
+// ***************************
+    //$hasReport = 0;
+}
+var_dump($hasReport);die();
+// ***************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- <table class="table stripe row-border" id="membersTbl" cellspacing="0">
+                <thead>
+                    <tr>
+                        
+                        <th>Patient ID</th>
+                        <th>Patient Name</th>
+                        <th class="text-center">Birthdate</th>
+                        <th class="text-center">Gender</th>
+                        
+                        <th width="15%" class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                @foreach($patients as $patient)
+                    <tr>
+
+                        <td> {{$patient->PatientID}}</td>
+                        <td><a href="#">{{$patient->PatientNam}}</a></td>
+                        <td class="text-center">{{$patient->PatientBir}} </td>
+                        
+                        
+                        <td class="text-center"> {{$patient->PatientSex}} </td>
+                       
+
+                        <td class="text-center">
+                            <div claas="row" style="display:inline-flex;">
+                                <a href="{{ route('dicom.patient.studies', ['id' => $patient->PatientID]) }}" class="btn btn-outline-success btn-sm"><i class="fas fa-eye"></i></a>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table> -->
+
+
+
+
+
+
+
+            @foreach($studies as $study)
+                        <tr>
+                            <td> {{$study->StudyInsta}}</td>
+                            <td class="text-center"><?php echo $study->ReferPhysi ?: "Null" ?></td>
+                            <td class="text-center"> {{$study->StudyModal}} </td>
+                            <!-- <td class="text-center">{{Carbon\Carbon::createFromFormat('Ymd his', $study->StudyDate." ".$study->StudyTime)->format('Y/m/d g:i A')}}</td> -->
+                            <td class="text-center">{{Carbon\Carbon::createFromFormat('Ymd his', $study->StudyDate." ".$study->StudyTime)->format('Y/m/d g:i A')}}</td>
+                            
+                            <td class="text-center">
+                                <div claas="row" style="display:inline-flex;">
+                                    @if(Auth::user()->can('create appointment'))
+                                        <form method="get" action="/view/dicom/patient/{{$study->PatientID}}">
+                                            <input type="hidden" name="study_insta" value="{{$study->StudyInsta}}"/>
+                                            <button  type="submit" <?php if($study->hasReport == "1"){ echo "disabled";} ?> class="btn btn-outline-<?php if($study->hasReport == "1"){ echo "secondary";}else{ echo "success";} ?> btn-sm"><i class="fa fa-edit"></i></button>
+                                        </form>
+                                    @endif
+                                    <!-- <a href="{{ route('dicom.patient.studies', ['id' => $study->PatientID]) }}" class="btn btn-outline-success btn-sm"><i class="fas fa-eye"></i></a> -->
+                                    <a class="btn btn-outline-secondary btn-sm" title="View Dicom" onclick='openPopup("<?php echo $study->StudyInsta; ?>",<?php echo $study->PatientID; ?>)' ><img class="fa grey" width="16" src="{{ asset('webfonts/x-ray-solid.svg') }}" /></a>
+                                    <!-- <a href="#" onclick='openPopup("{{$study->StudyInsta}}", {{$study->PatientID}})' class="btn btn-outline-success btn-sm"><i class="fas fa-eye"></i></a> -->
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach

@@ -1,0 +1,57 @@
+   .soraya{
+   background: red;
+  }
+
+
+
+
+  @media print {
+   /* All your print styles go here 
+   #header,
+   #footer,
+   #nav {
+     display: none !important;
+   }
+     */
+     #logo-header.for-print {
+      position: fixed!important;
+      min-height: 150px; 
+      display: flex;
+      width: 100%;
+   }
+
+     #patient-info {
+      min-height: 150px; 
+      top:150px;
+     position: fixed!important;
+   }
+   #report.footer {
+      bottom: 20px!important;
+      position: fixed!important;
+      display: flex;
+      width: 100%!important;
+   }
+   #result-Content{
+      min-height: 450px!important;
+      overflow: visible!important;
+     /** display:block!important; */
+      margin-bottom: 20px!important;
+      background-position: center;
+      background-image: url("{{ asset('uploads/bg.png') }}");
+      background-repeat: no-repeat;
+   }
+ }
+
+ @media screen {
+   #logo-header.for-print {
+      display: none!important; 
+   }
+   #report.footer {
+      display: none!important; 
+   }
+   #result-Content{
+      min-height: 450px;
+      display:block;
+   }
+}
+
